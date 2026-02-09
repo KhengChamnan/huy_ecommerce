@@ -2,6 +2,57 @@
    SHOP.CO - Products Page JavaScript
    ======================================== */
 
+// ========================================
+// Loading Overlay Functions
+// ========================================
+function createLoadingOverlay() {
+  const overlay = document.createElement('div');
+  overlay.className = 'loading-overlay';
+  overlay.innerHTML = `
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p class="loading-text">Loading product...</p>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  return overlay;
+}
+
+function showLoadingOverlay() {
+  let overlay = document.querySelector('.loading-overlay');
+  if (!overlay) {
+    overlay = createLoadingOverlay();
+  }
+  // Trigger reflow for animation
+  overlay.offsetHeight;
+  overlay.classList.add('active');
+  return overlay;
+}
+
+function hideLoadingOverlay() {
+  const overlay = document.querySelector('.loading-overlay');
+  if (overlay) {
+    overlay.classList.remove('active');
+  }
+}
+
+// ========================================
+// Async Product Loading
+// ========================================
+async function loadProductAsync(productId) {
+  return new Promise((resolve) => {
+    // Simulate async loading (fetching from API)
+    setTimeout(() => {
+      if (typeof productsData !== 'undefined') {
+        const product = productsData.find(p => p.id === productId);
+        resolve(product);
+      } else {
+        resolve(null);
+      }
+    }, 800); // Simulated network delay
+  });
+}
+
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function () {
   // Initialize the products page
@@ -68,9 +119,35 @@ function createProductCard(product) {
   card.appendChild(rating);
   card.appendChild(price);
 
-  // Add click event to navigate to product details
-  card.addEventListener('click', function () {
-    window.location.href = `product-details.html?id=${product.id}`;
+  // Add click event to navigate to product details with loading overlay
+  card.addEventListener('click', async function (e) {
+    e.preventDefault();
+    
+    // Show loading overlay
+    showLoadingOverlay();
+    
+    // Async load product data (simulated)
+    try {
+      const productData = await loadProductAsync(product.id);
+      
+      if (productData) {
+        // Store product data in sessionStorage for immediate access on the next page
+        sessionStorage.setItem('currentProduct', JSON.stringify(productData));
+        sessionStorage.setItem('productDataReady', 'true');
+        
+        // Small delay to ensure storage is written
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Navigate to product details page with product ID
+        window.location.href = `product-details.html?id=${product.id}`;
+      } else {
+        hideLoadingOverlay();
+        console.error('Product not found');
+      }
+    } catch (error) {
+      hideLoadingOverlay();
+      console.error('Error loading product:', error);
+    }
   });
 
   return card;

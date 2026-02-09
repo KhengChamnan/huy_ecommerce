@@ -55,7 +55,7 @@
           <input type="text" placeholder="Search for products..." />
         </div>
         <div class="header-icons">
-          <a href="cart.html" class="icon-btn" aria-label="Cart">
+          <a href="cart.html" class="icon-btn cart-icon-btn" aria-label="Cart">
             <svg
               width="24"
               height="24"
@@ -70,6 +70,7 @@
                 d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
               ></path>
             </svg>
+            <span class="cart-count" id="cart-count">0</span>
           </a>
           <button class="icon-btn" aria-label="Account">
             <svg
@@ -195,7 +196,7 @@
             </div>
           </div>
         </div>
-        <a href="#" class="btn btn-outline">View All</a>
+        <a href="products.html" class="btn btn-outline">View All</a>
       </div>
     </section>
 
@@ -267,7 +268,7 @@
             <div class="product-price">$210</div>
           </div>
         </div>
-        <a href="#" class="btn btn-outline">View All</a>
+        <a href="products.html" class="btn btn-outline">View All</a>
       </div>
     </section>
 
@@ -376,6 +377,7 @@
       </div>
     </footer>
 
+    <script src="cart-utils.js"></script>
     <script src="products-data.js"></script>
     <script src="script.js"></script>
   </body>

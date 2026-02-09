@@ -1,19 +1,12 @@
-/* ========================================
-   SHOP.CO - Cart Functionality
-   ======================================== */
-
-// Cart state management
 let cart = [];
 const DELIVERY_FEE = 15;
 let appliedDiscount = 0;
 
-// Initialize cart from localStorage on page load
 function initCart() {
   const savedCart = localStorage.getItem('shopco_cart');
   if (savedCart) {
     cart = JSON.parse(savedCart);
   } else {
-    // Add some demo items for testing
     cart = [
       {
         id: 2,
@@ -49,17 +42,14 @@ function initCart() {
   updateSummary();
 }
 
-// Save cart to localStorage
 function saveCart() {
   localStorage.setItem('shopco_cart', JSON.stringify(cart));
 }
 
-// Get cart from localStorage
 function getCart() {
   return cart;
 }
 
-// Add item to cart
 function addToCart(product) {
   const existingItem = cart.find(item => 
     item.id === product.id && 
@@ -77,35 +67,40 @@ function addToCart(product) {
   }
 
   saveCart();
+  if (typeof updateCartCount === 'function') {
+    updateCartCount();
+  }
 }
 
-// Update item quantity
 function updateQuantity(itemIndex, delta) {
   if (itemIndex >= 0 && itemIndex < cart.length) {
     cart[itemIndex].quantity += delta;
     
-    // Remove item if quantity is 0 or less
     if (cart[itemIndex].quantity <= 0) {
       removeFromCart(itemIndex);
     } else {
       saveCart();
       renderCart();
       updateSummary();
+      if (typeof updateCartCount === 'function') {
+        updateCartCount();
+      }
     }
   }
 }
 
-// Remove item from cart
 function removeFromCart(itemIndex) {
   if (itemIndex >= 0 && itemIndex < cart.length) {
     cart.splice(itemIndex, 1);
     saveCart();
     renderCart();
     updateSummary();
+    if (typeof updateCartCount === 'function') {
+      updateCartCount();
+    }
   }
 }
 
-// Calculate totals
 function calculateTotals() {
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const discount = Math.round(subtotal * (appliedDiscount / 100));
@@ -119,7 +114,7 @@ function calculateTotals() {
   };
 }
 
-// Update order summary display
+
 function updateSummary() {
   const totals = calculateTotals();
 
@@ -130,14 +125,13 @@ function updateSummary() {
   document.getElementById('delivery-value').textContent = `$${totals.deliveryFee}`;
   document.getElementById('total-value').textContent = `$${totals.total}`;
 
-  // Update discount label if applicable
   const discountRow = document.querySelector('.summary-row:nth-child(2) .summary-label');
   if (appliedDiscount > 0) {
     discountRow.textContent = `Discount (-${appliedDiscount}%)`;
   }
 }
 
-// Render cart items
+
 function renderCart() {
   const cartItemsContainer = document.getElementById('cart-items');
 
@@ -184,12 +178,10 @@ function renderCart() {
   `).join('');
 }
 
-// Apply promo code
 function applyPromoCode() {
   const promoInput = document.getElementById('promo-input');
   const code = promoInput.value.trim().toUpperCase();
 
-  // Simple promo code validation
   const validCodes = {
     'SAVE20': 20,
     'DISCOUNT10': 10,
@@ -208,34 +200,32 @@ function applyPromoCode() {
   }
 }
 
-// Checkout handler
 function goToCheckout() {
   if (cart.length === 0) {
     alert('Your cart is empty!');
     return;
   }
 
-  const totals = calculateTotals();
-  alert(`Checkout - Total: $${totals.total}\n\nThis is a demo. Payment integration would go here.`);
+  localStorage.setItem('shopco_discount', appliedDiscount.toString());
+  
+  window.location.href = 'checkout.html';
 }
 
-// Event listeners
 document.addEventListener('DOMContentLoaded', () => {
   initCart();
 
-  // Promo code application
+
   const applyBtn = document.getElementById('apply-promo-btn');
   if (applyBtn) {
     applyBtn.addEventListener('click', applyPromoCode);
   }
 
-  // Checkout button
   const checkoutBtn = document.getElementById('checkout-btn');
   if (checkoutBtn) {
     checkoutBtn.addEventListener('click', goToCheckout);
   }
 
-  // Allow Enter key to apply promo code
+
   const promoInput = document.getElementById('promo-input');
   if (promoInput) {
     promoInput.addEventListener('keypress', (e) => {
@@ -246,7 +236,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Export functions for use in other scripts
 if (typeof window !== 'undefined') {
   window.cartFunctions = {
     addToCart,

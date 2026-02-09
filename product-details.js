@@ -1,42 +1,32 @@
-/* ========================================
-   SHOP.CO - Product Details JavaScript
-   ======================================== */
 
 document.addEventListener('DOMContentLoaded', function() {
     
-    // ========================================
-    // Load Product Data from URL
-    // ========================================
+    
     const urlParams = new URLSearchParams(window.location.search);
     const productId = parseInt(urlParams.get('id')) || 1;
     
-    // Find the product from productsData
     if (typeof productsData !== 'undefined') {
         const product = productsData.find(p => p.id === productId);
         
         if (product) {
-            // Update page title
             document.title = `${product.name} - SHOP.CO`;
             
-            // Update product title
             const productTitle = document.querySelector('.product-title');
             if (productTitle) productTitle.textContent = product.name;
             
-            // Update product images
+            
             const mainImage = document.getElementById('main-product-image');
             if (mainImage) {
                 mainImage.src = product.image.replace('w=300&h=400', 'w=450&h=530');
                 mainImage.alt = product.name;
             }
             
-            // Update thumbnails
             const thumbnails = document.querySelectorAll('.thumbnail img');
             thumbnails.forEach(thumb => {
                 thumb.src = product.image.replace('w=300&h=400', 'w=150&h=170');
                 thumb.alt = `${product.name} view`;
             });
             
-            // Update price
             const currentPriceLarge = document.querySelector('.current-price-large');
             const originalPriceLarge = document.querySelector('.original-price-large');
             const discountBadgeLarge = document.querySelector('.discount-badge-large');
@@ -72,11 +62,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (starsHalfSpan) starsHalfSpan.style.display = hasHalfStar ? 'inline' : 'none';
             }
             
-            // Update description
             const productDescription = document.querySelector('.product-description');
             if (productDescription) productDescription.textContent = product.description;
             
-            // Update color options
             const colorOptionsContainer = document.querySelector('.color-options');
             if (colorOptionsContainer && product.colors) {
                 colorOptionsContainer.innerHTML = product.colors.map((color, index) => `
@@ -85,22 +73,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     </button>
                 `).join('');
                 
-                // Re-attach color button event listeners
                 initColorButtons();
             }
             
-            // Update size options
             const sizeOptionsContainer = document.querySelector('.size-options');
             if (sizeOptionsContainer && product.sizes) {
                 sizeOptionsContainer.innerHTML = product.sizes.map((size, index) => `
                     <button class="size-btn ${index === 2 ? 'active' : ''}">${size}</button>
                 `).join('');
                 
-                // Re-attach size button event listeners
                 initSizeButtons();
             }
             
-            // Update breadcrumb
+            
             const breadcrumbList = document.querySelector('.breadcrumb-list');
             if (breadcrumbList) {
                 const lastBreadcrumb = breadcrumbList.querySelector('li:last-child span');
@@ -109,9 +94,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // ========================================
-    // Initialize Color Buttons
-    // ========================================
     function initColorButtons() {
         const colorButtons = document.querySelectorAll('.color-btn');
         colorButtons.forEach(btn => {
@@ -126,9 +108,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // ========================================
-    // Initialize Size Buttons
-    // ========================================
     function initSizeButtons() {
         const sizeButtons = document.querySelectorAll('.size-btn');
         sizeButtons.forEach(btn => {
@@ -139,25 +118,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // ========================================
-    // Thumbnail Gallery
-    // ========================================
     const thumbnails = document.querySelectorAll('.thumbnail');
     const mainImage = document.getElementById('main-product-image');
     
     if (thumbnails.length > 0 && mainImage) {
         thumbnails.forEach(thumbnail => {
             thumbnail.addEventListener('click', function() {
-                // Remove active class from all thumbnails
                 thumbnails.forEach(t => t.classList.remove('active'));
                 
-                // Add active class to clicked thumbnail
                 this.classList.add('active');
                 
-                // Update main image
                 const thumbnailImg = this.querySelector('img');
                 if (thumbnailImg) {
-                    // Get larger version of the image
                     const newSrc = thumbnailImg.src.replace('w=150&h=170', 'w=450&h=530');
                     mainImage.style.opacity = '0';
                     mainImage.style.transition = 'opacity 0.3s ease';
@@ -171,45 +143,35 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // ========================================
-    // Color Selection
-    // ========================================
+    
     const colorButtons = document.querySelectorAll('.color-btn');
     
     colorButtons.forEach(btn => {
         btn.addEventListener('click', function() {
-            // Remove active class from all color buttons
             colorButtons.forEach(b => {
                 b.classList.remove('active');
                 const svg = b.querySelector('svg');
                 if (svg) svg.style.opacity = '0';
             });
             
-            // Add active class to clicked button
             this.classList.add('active');
             const svg = this.querySelector('svg');
             if (svg) svg.style.opacity = '1';
         });
     });
     
-    // ========================================
-    // Size Selection
-    // ========================================
+    
     const sizeButtons = document.querySelectorAll('.size-btn');
     
     sizeButtons.forEach(btn => {
         btn.addEventListener('click', function() {
-            // Remove active class from all size buttons
             sizeButtons.forEach(b => b.classList.remove('active'));
             
-            // Add active class to clicked button
             this.classList.add('active');
         });
     });
     
-    // ========================================
-    // Quantity Selector
-    // ========================================
+    
     const qtyMinus = document.querySelector('.qty-btn.minus');
     const qtyPlus = document.querySelector('.qty-btn.plus');
     const qtyValue = document.querySelector('.qty-value');
@@ -242,14 +204,11 @@ document.addEventListener('DOMContentLoaded', function() {
         qtyValue.style.transition = 'transform 0.15s ease';
     }
     
-    // ========================================
-    // Add to Cart Button
-    // ========================================
+
     const addToCartBtn = document.querySelector('.add-to-cart-btn');
     
     if (addToCartBtn) {
         addToCartBtn.addEventListener('click', function() {
-            // Get current product data
             const urlParams = new URLSearchParams(window.location.search);
             const productId = parseInt(urlParams.get('id')) || 1;
             const product = productsData.find(p => p.id === productId);
@@ -259,18 +218,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Get selected options
             const selectedColorBtn = document.querySelector('.color-btn.active');
             const selectedSizeBtn = document.querySelector('.size-btn.active');
             const quantity = parseInt(document.querySelector('.qty-value')?.textContent || 1);
-            
-            // Validate selections
             if (!selectedSizeBtn) {
                 alert('Please select a size');
                 return;
             }
             
-            // Get color name from color code
             const colorCode = selectedColorBtn?.dataset.color || product.colors[0];
             const colorNames = {
                 '#4F4631': 'Olive',
@@ -332,10 +287,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 cart.push(cartItem);
             }
             
-            // Save cart to localStorage
             localStorage.setItem('shopco_cart', JSON.stringify(cart));
             
-            // Visual feedback
+            if (typeof updateCartCount === 'function') {
+                updateCartCount();
+            }
+            
             const originalText = this.textContent;
             this.textContent = 'Added to Cart ✓';
             this.style.backgroundColor = '#01AB31';
@@ -351,28 +308,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+
     
-    // ========================================
-    // Tab Navigation
-    // ========================================
+    
     const tabButtons = document.querySelectorAll('.tab-btn');
     
     tabButtons.forEach(btn => {
         btn.addEventListener('click', function() {
-            // Remove active class from all tabs
+            
             tabButtons.forEach(b => b.classList.remove('active'));
             
-            // Add active class to clicked tab
             this.classList.add('active');
-            
-            // Here you would typically show/hide content based on tab
-            // For now, only Reviews tab has content
+           
         });
     });
     
-    // ========================================
-    // Review Card Hover Effects
-    // ========================================
+    
     const reviewCards = document.querySelectorAll('.review-card');
     
     reviewCards.forEach(card => {
@@ -388,9 +339,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // ========================================
-    // Load More Reviews Button
-    // ========================================
+    
     const loadMoreBtn = document.querySelector('.load-more-btn');
     
     if (loadMoreBtn) {
@@ -399,7 +348,6 @@ document.addEventListener('DOMContentLoaded', function() {
             this.textContent = 'Loading...';
             this.disabled = true;
             
-            // Simulate loading more reviews
             setTimeout(() => {
                 this.textContent = 'No More Reviews';
                 this.style.opacity = '0.6';
@@ -407,9 +355,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // ========================================
-    // Image Zoom on Hover (Desktop)
-    // ========================================
+    
     const galleryMain = document.querySelector('.gallery-main');
     
     if (galleryMain && window.innerWidth > 768) {
